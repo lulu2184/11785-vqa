@@ -1,10 +1,11 @@
 import os
+import sys
 import json
 import numpy as np
 
 from word_dictionary import WordDict
 
-EMBEDDING_DIMENSION = 300
+EMBEDDING_DIMENSION = 50
 
 
 def create_dict(data_dir):
@@ -30,13 +31,12 @@ def create_glove_embedding(idx_to_word, glove_file):
     with open(glove_file, 'r') as f:
         entries = f.readlines()
     embedding_dim = len(entries[0].split(' ')) - 1
-    print('embedding dim is {}'.format(embedding_dim))
-    weights = np.zeros((len(idx_to_word), embedding_dim), dtype=np.float)
+    weights = np.zeros((len(idx_to_word), embedding_dim), dtype=np.float32)
 
     for entry in entries:
         vals = entry.split(' ')
         word = vals[0]
-        vals = map(float, vals[1:])
+        vals = [float(s) for s in vals[1:]]
         word_to_embedding[word] = np.array(vals)
     for idx, word in enumerate(idx_to_word):
         if word in word_to_embedding:
@@ -47,7 +47,7 @@ def create_glove_embedding(idx_to_word, glove_file):
 if __name__ == '__main__':
     word_dict = create_dict('data')
     embedding_dim = EMBEDDING_DIMENSION
-    glove_file = 'data/glove/glove.6B.{}.txt'.format(embedding_dim)
+    glove_file = 'data/glove/glove.6B.{}d.txt'.format(embedding_dim)
     weights, word_to_embedding = create_glove_embedding(
         word_dict.idx_to_word, glove_file)
-    np.save('data/glove6b_init_{}.npy'.format(embedding_dim), weights)
+    np.save('data/glove6b_init_{}d.npy'.format(embedding_dim), weights)

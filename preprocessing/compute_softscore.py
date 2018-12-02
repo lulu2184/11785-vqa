@@ -1,8 +1,10 @@
 import errno
 import json
 import os
+import sys
 import pickle
 import re
+
 
 contractions = {
     "aint": "ain't", "arent": "aren't", "cant": "can't", "couldve":
@@ -66,6 +68,7 @@ comma_strip = re.compile(r"(\d)(\,)(\d)")
 punct = [';', r"/", '[', ']', '"', '{', '}',
          '(', ')', '=', '+', '\\', '_', '-',
          '>', '<', '@', '`', ',', '?', '!']
+cache_dir = 'data/cache'
 
 
 def process_punctuation(text):
@@ -112,7 +115,7 @@ def filter_answers(answers_dataset, min_occurrance=9):
             occurrance[groud_truth] = set()
         occurrance[groud_truth].add(answer_entry['question_id'])
 
-    for answer in occurrance.keys():
+    for answer in list(occurrance):
         if len(occurrance[answer]) < min_occurrance:
             occurrance.pop(answer)
 
@@ -120,7 +123,6 @@ def filter_answers(answers_dataset, min_occurrance=9):
 
 
 def create_answer_to_label(occurrance, name):
-    cache_dir = 'data/cache'
     answer_to_label = {}
     label_to_answer = []
     label = 0
@@ -157,8 +159,6 @@ def get_score(occurences):
 
 
 def compute_target(answers_dataset, answer_to_label, name):
-    cache_dir = 'data/cache'
-
     target = []
     for answer_entry in answers_dataset:
         answers = answer_entry['answers']
@@ -191,7 +191,6 @@ def compute_target(answers_dataset, answer_to_label, name):
                 raise
     cache_file = os.path.join(cache_dir, name + '_target.pkl')
     pickle.dump(target, open(cache_file, 'wb'))
-    return target
 
 
 if __name__ == '__main__':
