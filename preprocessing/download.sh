@@ -31,3 +31,13 @@ rm data/v2_Annotations_Val_mscoco.zip
 wget -P data https://imagecaption.blob.core.windows.net/imagecaption/trainval_36.zip
 unzip data/trainval_36.zip -d data
 rm data/trainval_36.zip
+
+# Train 2014
+wget -P data http://images.cocodataset.org/zips/train2014.zip
+unzip data/train2014.zip -d data
+rm data/train2014.zip
+
+# Val 2014
+wget -P data http://images.cocodataset.org/zips/val2014.zip
+unzip data/val2014.zip -d data
+rm data/val2014.zip
