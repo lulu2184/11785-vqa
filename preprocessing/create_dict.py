@@ -4,7 +4,7 @@ import os
 import numpy as np
 from word_dictionary import WordDict
 
-EMBEDDING_DIMENSION = 50
+EMBEDDING_DIMENSION = 300
 
 
 def create_dict(data_dir):
@@ -45,6 +45,7 @@ def create_glove_embedding(idx_to_word, glove_file):
 
 if __name__ == '__main__':
     word_dict = create_dict('data')
+    word_dict.dump_to_file('data/dictionary.pkl')
     embedding_dim = EMBEDDING_DIMENSION
     glove_file = 'data/glove/glove.6B.{}d.txt'.format(embedding_dim)
     weights, word_to_embedding = create_glove_embedding(
