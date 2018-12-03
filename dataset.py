@@ -23,12 +23,6 @@ def create_entry(img, question, answer):
 
 
 def load_dataset(data_dir, name, img_id_to_val):
-    """Load entries
-
-    img_id_to_val: dict {img_id -> val} val can be used to retrieve image or features
-    data_dir: root path of dataset
-    name: 'train', 'val'
-    """
     question_path = os.path.join(
         data_dir, 'v2_OpenEnded_mscoco_%s2014_questions.json' % name)
     questions = sorted(json.load(open(question_path))['questions'],
@@ -108,7 +102,7 @@ class VQADataset(Dataset):
         answer = entry['answer']
         labels = answer['labels']
         scores = answer['scores']
-        target = torch.zeros(self.num_ans_candidates)
+        target = torch.zeros(self.answer_candidates_number)
         if labels is not None:
             target.scatter_(0, labels, scores)
 

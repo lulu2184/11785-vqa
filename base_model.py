@@ -1,7 +1,8 @@
 import torch.nn as nn
+
 from attention import Attention
-from language_model import WordEmbedding, QuestionEmbedding
 from classifier import SimpleClassifier
+from language_model import WordEmbedding, QuestionEmbedding
 from nonlinear import NonLinearLayer
 
 
@@ -24,10 +25,10 @@ class BaseModel(nn.Module):
         return: logits, not probs
         """
         w_emb = self.w_emb(q)
-        q_emb = self.q_emb(w_emb) # [batch, q_dim]
+        q_emb = self.q_emb(w_emb)  # [batch, q_dim]
 
-        att = self.v_att(v, q_emb) # [batch, num_objs, 1]
-        v_emb = (att * v).sum(dim=1) # [batch, v_dim]
+        att = self.v_att(v, q_emb)  # [batch, num_objs, 1]
+        v_emb = (att * v).sum(dim=1)  # [batch, v_dim]
 
         q_repr = self.q_net(q_emb)
         v_repr = self.v_net(v_emb)
@@ -37,8 +38,9 @@ class BaseModel(nn.Module):
 
 
 def build_baseline0(dataset, num_hid):
-    w_emb = WordEmbedding(dataset.dictionary.ntoken, 300, 0.0)
-    q_emb = QuestionEmbedding(300, num_hid, 1, False, 0.0)
+    w_emb = WordEmbedding(dataset.dictionary.ntoken, 300,
+                          'data/glove6b_init_300d.npy')
+    q_emb = QuestionEmbedding(300, num_hid, 1, False)
     v_att = Attention(dataset.v_dim, q_emb.num_hid, num_hid)
     q_net = NonLinearLayer([num_hid, num_hid])
     v_net = NonLinearLayer([dataset.v_dim, num_hid])

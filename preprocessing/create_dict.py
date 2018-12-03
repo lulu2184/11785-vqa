@@ -21,7 +21,7 @@ def create_dict(data_dir):
         question_path = os.path.join(data_dir, path)
         questions = json.load(open(question_path))['questions']
         for question in questions:
-            word_dict.tokenize(question['question'])
+            word_dict.tokenize(question['question'], True)
     return word_dict
 
 

@@ -12,11 +12,7 @@ class WordEmbedding(nn.Module):
         self.embedding = nn.Embedding(ntoken + 1,
                                       embedding_dim,
                                       padding_idx=ntoken)
-        self.ntoken = ntoken
-        self.embedding_dim = embedding_dim
-
-        weight_init = torch.from_numpy(np.load(np_file))
-        self.embedding.weight.data[:self.ntoken] = weight_init
+        self.embedding.weight.data[:ntoken] = torch.from_numpy(np.load(np_file))
 
     def forward(self, x):
         x = self.embedding(x)
@@ -30,7 +26,7 @@ class QuestionEmbedding(nn.Module):
         self.rnn = nn.GRU(features_dim, hidden_num, nlayers,
                           bidirectional=bidirectional, batch_first=True)
         self.hidden_num = hidden_num
-        self.ndirection = 1 + int(bidirectional)
+        self.ndirections = 1 + int(bidirectional)
 
     def forward(self, x):
         # x: [batch, sequence, features_dim]
@@ -38,10 +34,9 @@ class QuestionEmbedding(nn.Module):
         weight = next(self.parameters()).data
         hidden_shape = (
             self.nlayers * self.ndirections, batch_size, self.hidden_num)
-        hidden_state = Variable(
-            weight.new(self.nlayers, hidden_shape, self.nhid).zero_())
+        hidden_state = Variable(weight.new(*hidden_shape).zero_())
         self.rnn.flatten_parameters()
-        output, hidden = self.rnn(x)
+        output, hidden = self.rnn(x, hidden_state)
 
         if self.ndirections == 1:
             return output[:, -1]

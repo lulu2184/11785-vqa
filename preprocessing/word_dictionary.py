@@ -13,17 +13,21 @@ class WordDict(object):
     def __len__(self):
         return len(self.idx_to_word)
 
-    def tokenize(self, sentence):
+    def tokenize(self, sentence, is_add_word):
         words = sentence.lower().replace(
             ',', '').replace(
             '?', '').replace(
             '\'s', ' \'s').split()
         tokens = []
-        for w in words:
-            if w not in self.word_to_idx:
-                self.idx_to_word.append(w)
-                self.word_to_idx[w] = len(self.idx_to_word) - 1
-            tokens.append(w)
+        if is_add_word:
+            for w in words:
+                if w not in self.word_to_idx:
+                    self.idx_to_word.append(w)
+                    self.word_to_idx[w] = len(self.idx_to_word) - 1
+                tokens.append(self.word_to_idx[w])
+        else:
+            for w in words:
+                tokens.append(self.word_to_idx[w])
         return tokens
 
     def dump_to_file(self, filepath):
