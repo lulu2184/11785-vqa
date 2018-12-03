@@ -1,8 +1,7 @@
-import os
-import sys
 import json
-import numpy as np
+import os
 
+import numpy as np
 from word_dictionary import WordDict
 
 EMBEDDING_DIMENSION = 50

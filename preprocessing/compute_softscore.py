@@ -1,7 +1,6 @@
 import errno
 import json
 import os
-import sys
 import pickle
 import re
 
