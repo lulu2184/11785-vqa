@@ -63,6 +63,7 @@ def train(model, train_loader, dev_loader, num_epochs=30, output_dir='output'):
     writer = SummaryWriter()
     optim = torch.optim.Adamax(model.parameters())
     best_dev_score = 0
+    log_file = open("log.txt", "w")
 
     for epoch in range(num_epochs):
         total_loss = 0
@@ -95,14 +96,24 @@ def train(model, train_loader, dev_loader, num_epochs=30, output_dir='output'):
         dev_score, bound = inference(model, dev_loader)
         model.train(True)
 
-        print('epoch {0}, time: {1:.2f}'.format(epoch, time.time() - t))
-        print('\ttrain_loss: {0:.2f}, score: {1:.2f}'.format(total_loss,
-                                                             train_score))
-        print('\tdev score: {0:.2f} {1:.2f}'.format(100 * dev_score,
-                                                    100 * bound))
+        epoch_statistics1 = 'epoch {0}, time: {1:.2f}'.format(epoch,
+                                                              time.time() - t)
+        epoch_statistics2 = '\ttrain_loss: {0:.2f}, score: {1:.2f}'.format(
+            total_loss, train_score)
+        epoch_statistics3 = '\tdev score: {0:.2f}/{1:.2f}'.format(
+            100 * dev_score, 100 * bound)
+        print(epoch_statistics1)
+        print(epoch_statistics2)
+        print(epoch_statistics3)
+
+        log_file.write(epoch_statistics1)
+        log_file.write(epoch_statistics2)
+        log_file.write(epoch_statistics3)
+        log_file.write('\n')
+        log_file.flush()
 
         if dev_score > best_dev_score:
-            model_path = os.path.join(output_dir, 'model.pth')
+            model_path = os.path.join(output_dir, 'model-{}.pth'.format(epoch))
             torch.save(model.state_dict(), model_path)
             best_dev_score = dev_score
 
