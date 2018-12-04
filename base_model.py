@@ -41,9 +41,9 @@ def build_baseline0(dataset, num_hid):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, 300,
                           'data/glove6b_init_300d.npy')
     q_emb = QuestionEmbedding(300, num_hid, 1, False)
-    v_att = Attention(dataset.v_dim, q_emb.num_hid, num_hid)
+    v_att = Attention(dataset.v_dim, q_emb.hidden_num, num_hid)
     q_net = NonLinearLayer([num_hid, num_hid])
     v_net = NonLinearLayer([dataset.v_dim, num_hid])
     classifier = SimpleClassifier(
-        num_hid, 2 * num_hid, dataset.num_ans_candidates, 0.5)
+        num_hid, 2 * num_hid, dataset.answer_candidates_number, 0.5)
     return BaseModel(w_emb, q_emb, v_att, q_net, v_net, classifier)

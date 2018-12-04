@@ -48,12 +48,13 @@ class VQADataset(Dataset):
                                             'trainval_answer_to_label.pkl')
         label_to_answer_path = os.path.join(data_dir, 'cache',
                                             'trainval_label_to_answer.pkl')
-        self.answer_to_label = pickle.load(open(answer_to_label_path), 'rb')
-        self.label_to_answer = pickle.load(open(label_to_answer_path), 'rb')
+        self.answer_to_label = pickle.load(open(answer_to_label_path, 'rb'))
+        self.label_to_answer = pickle.load(open(label_to_answer_path, 'rb'))
         self.answer_candidates_number = len(self.answer_to_label)
         self.dictionary = dictionary
         self.image_id_to_idx = pickle.load(
-            open(os.path.join(data_dir, '{}36_imgid2idx.pkl'.format(name))))
+            open(os.path.join(data_dir, '{}36_imgid2idx.pkl'.format(name)),
+                 'rb'))
 
         h5_path = os.path.join(data_dir, '{}36.hdf5'.format(name))
         with h5py.File(h5_path, 'r') as hf:
@@ -68,7 +69,7 @@ class VQADataset(Dataset):
             tokens = tokens[:MAX_LENGTH]
             if len(tokens) < MAX_LENGTH:
                 # Note here we pad in front of the sentence
-                padding = [self.dictionary.padding_idx] * (
+                padding = [self.dictionary.ntoken] * (
                         MAX_LENGTH - len(tokens))
                 tokens = padding + tokens
             entry['q_token'] = tokens
@@ -92,7 +93,7 @@ class VQADataset(Dataset):
                 entry['answer']['labels'] = None
                 entry['answer']['scores'] = None
 
-        # self.v_dim = self.features.size(2)
+        self.v_dim = self.features.size(2)
 
     def __getitem__(self, index):
         entry = self.entries[index]

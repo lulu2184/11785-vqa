@@ -13,6 +13,8 @@ class WordEmbedding(nn.Module):
                                       embedding_dim,
                                       padding_idx=ntoken)
         self.embedding.weight.data[:ntoken] = torch.from_numpy(np.load(np_file))
+        self.ntoken = ntoken
+        self.emb_dim = embedding_dim
 
     def forward(self, x):
         x = self.embedding(x)
@@ -26,6 +28,9 @@ class QuestionEmbedding(nn.Module):
         self.rnn = nn.GRU(features_dim, hidden_num, nlayers,
                           bidirectional=bidirectional, batch_first=True)
         self.hidden_num = hidden_num
+        self.num_hid = hidden_num
+        self.in_dim = features_dim
+        self.nlayers = nlayers
         self.ndirections = 1 + int(bidirectional)
 
     def forward(self, x):

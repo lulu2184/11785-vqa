@@ -38,3 +38,11 @@ class WordDict(object):
         word_to_idx, idx_to_word = pickle.load(open(filepath, 'rb'))
         dict = cls(word_to_idx, idx_to_word)
         return dict
+
+    @property
+    def ntoken(self):
+        return len(self.word_to_idx)
+
+    @property
+    def padding_idx(self):
+        return len(self.word_to_idx)

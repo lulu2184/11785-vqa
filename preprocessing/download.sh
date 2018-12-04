@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ## Script for downloading data
 
 # GloVe Vectors
