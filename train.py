@@ -8,8 +8,8 @@ from tensorboardX import SummaryWriter
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
-from base_model import build_baseline0
 from dataset import VQADataset
+from multi_head_model import build_multi_head_attention_model
 from preprocessing.word_dictionary import WordDict
 
 BATCH_SIZE = 512
@@ -37,13 +37,13 @@ def inference(model, dataloader):
     score = 0
     upper_bound = 0
     num_data = 0
-    for v, q, a in iter(dataloader):
-        v = Variable(v, volatile=True).cuda()
-        q = Variable(q, volatile=True).cuda()
-        pred = model(v, q, None)
-        batch_score = compute_score_with_logits(pred, a.cuda()).sum()
+    for v_dev, q_dev, a_dev in iter(dataloader):
+        v_dev = Variable(v_dev).cuda()
+        q_dev = Variable(q_dev).cuda()
+        pred = model(v_dev, q_dev, None)
+        batch_score = compute_score_with_logits(pred, a_dev.cuda()).sum()
         score += batch_score
-        upper_bound += (a.max(1)[0]).sum()
+        upper_bound += (a_dev.max(1)[0]).sum()
         num_data += pred.size(0)
 
     score = score / len(dataloader.dataset)
@@ -127,7 +127,8 @@ if __name__ == '__main__':
                               num_workers=NUMBER_OF_WORKERS)
     dev_loader = DataLoader(dev_dataset, BATCH_SIZE, shuffle=True,
                             num_workers=NUMBER_OF_WORKERS)
-    model = build_baseline0(train_dataset, HIDDEN_NUMBER)
+    # model = build_baseline0(train_dataset, HIDDEN_NUMBER)
+    model = build_multi_head_attention_model(train_dataset, HIDDEN_NUMBER)
     model = nn.DataParallel(model).cuda()
 
-    train(model, train_loader, dev_loader, 30)
+    train(model, train_loader, dev_loader)

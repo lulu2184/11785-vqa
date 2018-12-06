@@ -1,14 +1,14 @@
 import torch.nn as nn
 
-from attention import Attention
 from classifier import SimpleClassifier
 from language_model import WordEmbedding, QuestionEmbedding
+from multi_head_attention import MultiHeadAttention
 from nonlinear import NonLinearLayer
 
 
-class BaseModel(nn.Module):
+class MultiHeadAttentionModel(nn.Module):
     def __init__(self, w_emb, q_emb, v_att, q_net, v_net, classifier):
-        super(BaseModel, self).__init__()
+        super(MultiHeadAttentionModel, self).__init__()
         self.w_emb = w_emb
         self.q_emb = q_emb
         self.v_att = v_att
@@ -37,13 +37,14 @@ class BaseModel(nn.Module):
         return logits
 
 
-def build_baseline0(dataset, num_hid):
+def build_multi_head_attention_model(dataset, num_hid):
     w_emb = WordEmbedding(dataset.dictionary.ntoken, 300,
                           'data/glove6b_init_300d.npy')
     q_emb = QuestionEmbedding(300, num_hid, 1, False)
-    v_att = Attention(dataset.v_dim, q_emb.hidden_num, num_hid)
+    v_att = MultiHeadAttention(2, dataset.v_dim, q_emb.hidden_num, num_hid)
     q_net = NonLinearLayer([num_hid, num_hid])
     v_net = NonLinearLayer([dataset.v_dim, num_hid])
     classifier = SimpleClassifier(
         num_hid, 2 * num_hid, dataset.answer_candidates_number, 0.5)
-    return BaseModel(w_emb, q_emb, v_att, q_net, v_net, classifier)
+    return MultiHeadAttentionModel(
+        w_emb, q_emb, v_att, q_net, v_net, classifier)

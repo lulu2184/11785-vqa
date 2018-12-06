@@ -1,7 +1,7 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils.weight_norm import weight_norm
+
 
 class SimpleClassifier(nn.Module):
     def __init__(self, input_dim, hidden_dim, output_dim, dropout):
@@ -15,8 +15,3 @@ class SimpleClassifier(nn.Module):
         out = F.relu(out)
         out = self.dropout(out)
         return self.linear2(out)
-
-if __name__=='__main__':
-    x = torch.Tensor([3,1,2])
-    net = SimpleClassifier(3, 4, 5, 0)
-    print(net(x))
