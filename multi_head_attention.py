@@ -28,10 +28,9 @@ class MultiHeadAttention(nn.Module):
             head_v = v[i * self.v_dim: (i + 1) * self.v_dim].permute(1, 2, 0)
             head_q = q[i * self.q_dim:(i + 1) * self.q_dim].permute(1, 0)
             if i == 0:
-                w = self.atts[i](head_v, head_q).permute(2, 0, 1)
+                w = self.atts[i](head_v, head_q)
             else:
-                w = torch.cat(
-                    (w, self.atts[i](head_v, head_q).permute(2, 0, 1)))
+                w = torch.cat((w, self.atts[i](head_v, head_q)), dim=2)
 
-        w = self.linear(w.permute(1, 2, 0))
+        w = self.linear(w)
         return w

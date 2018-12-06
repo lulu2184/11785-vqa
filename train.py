@@ -9,7 +9,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 
 from dataset import VQADataset
-from multi_head_model import build_multi_head_attention_model
+from expr_parsing_model import build_expr_parsing_attention_model
 from preprocessing.word_dictionary import WordDict
 
 BATCH_SIZE = 512
@@ -128,7 +128,8 @@ if __name__ == '__main__':
     dev_loader = DataLoader(dev_dataset, BATCH_SIZE, shuffle=True,
                             num_workers=NUMBER_OF_WORKERS)
     # model = build_baseline0(train_dataset, HIDDEN_NUMBER)
-    model = build_multi_head_attention_model(train_dataset, HIDDEN_NUMBER)
+    # model = build_multi_head_attention_model(train_dataset, HIDDEN_NUMBER)
+    model = build_expr_parsing_attention_model(train_dataset, HIDDEN_NUMBER)
     model = nn.DataParallel(model).cuda()
 
     train(model, train_loader, dev_loader)
